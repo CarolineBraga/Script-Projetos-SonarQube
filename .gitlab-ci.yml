@@ -1,0 +1,33 @@
+stages:
+  - security-scan
+  - deploy
+
+
+secrets-scan:
+  stage: security-scan
+  needs: []
+  allow_failure: false
+  image:
+    name: zricethezav/gitleaks
+    entrypoint: [""]
+  script:
+    - gitleaks -v -s ./ detect --no-git   
+
+static-analysis:
+  stage: security-scan
+  needs: []
+  image: returntocorp/semgrep
+  allow_failure: true
+  script: semgrep ci
+  variables:
+    SEMGREP_RULES: p/default
+
+
+deploy:
+  stage: deploy
+  image: python:latest
+  script:
+    - pip install gspread
+    - pip install openpyxl
+    - pip install --upgrade python-gitlab
+    - python qg-projets.py ${SONARQUBE_CREDENTIALS} ${GITLAB_CREDENTIALS}
