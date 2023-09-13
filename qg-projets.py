@@ -128,7 +128,7 @@ def fetch_issues(wb):
 
     response = requests.get(
         "http://35.199.100.34:9000/api/issues/search?ps=1&facets=types",
-        auth=("squ_007cdd9b009e86fe7922a13af2f7be64aa3d91c0", ""),
+        auth=(sys.argv[1], ""),
     )
     sonarqube = json.loads(response.text)
     issues = sonarqube["facets"][0]["values"]
